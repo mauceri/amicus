@@ -66,9 +66,10 @@ class AssistantTests (unittest.TestCase):
 
     def test_data_config_persistence(self):
         dataConfig = self._createDataConfiguration()
+        dataConfigService = DataConfigurationService()
         jsonFileFqn = dataConfig.dataDir + "/dataConfigTest.json"
-        dataConfig.saveAsJson(jsonFileFqn)
-        dataConfigRead: DataConfiguration = DataConfiguration.loadFromJson(jsonFileFqn)
+        dataConfigService.saveAsJson(dataConfig, jsonFileFqn)
+        dataConfigRead: DataConfiguration = dataConfigService.loadFromJson(jsonFileFqn)
         self.assertIsNotNone(dataConfigRead)
         self.assertEqual(dataConfigRead.dataDir, self.REPERTOIRE_DATA )
 

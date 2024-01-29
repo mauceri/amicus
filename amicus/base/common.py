@@ -37,48 +37,6 @@ class DataConfiguration:
                     key, value = line.strip().split('=', 1)
                     os.environ[key] = value
 
-    class Encoder(json.JSONEncoder):
-        def default(self, o):
-            if isinstance(o, DataConfiguration):
-                # JSON object would be a dictionary.
-                return {
-                    "dataDir": o.dataDir,
-                    "envFileName": o.envFileName,
-                    "dbFileName": o.dbFileName,
-                    "llmUrl": o.llmUrl,
-                    "llmModel": o.llmModel,
-                    "llmApikeyEnvVar": o.llmApikeyEnvVar,
-                    "llmTemperature": o.llmTemperature
-                }
-            else:
-                # Base class will raise the TypeError.
-                return super().default(o)
-
-    class Decoder(json.JSONDecoder):
-        def __init__(self, object_hook=None, *args, **kwargs):
-            super().__init__(object_hook=self.object_hook, *args, **kwargs)
-
-        def object_hook(self, o):
-            decoded_config = DataConfiguration(
-                o.get('dataDir'),
-                o.get('envFileName'),
-                o.get('dbFileName'),
-                o.get('llmUrl'),
-                o.get('llmModel'),
-                o.get('llmApikeyEnvVar'),
-                o.get('llmTemperature'),
-            )
-            return decoded_config
-
-    def saveAsJson( self, jsonFileFqn: str ):
-        with open(jsonFileFqn, 'w') as f:
-            json.dump(self, f, indent=4, cls=DataConfiguration.Encoder)
-
-    @staticmethod
-    def loadFromJson( jsonFileFqn: str ):
-        with open( jsonFileFqn, 'r') as f:
-            config = json.load(f, cls=DataConfiguration.Decoder)
-        return config
 
 class Speech:
     def __init__(self, conversationId: str, speaker: str, date: str, content: str):
