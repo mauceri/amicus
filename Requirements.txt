@@ -1,0 +1,6 @@
+semaphore-bot==v0.16.0
+requests
+transformers
+sentencepiece
+protobuf
+jinja2

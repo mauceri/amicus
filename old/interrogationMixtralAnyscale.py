@@ -24,7 +24,7 @@ class InterrogationMixtral:
                  tokenizer = AutoTokenizer.from_pretrained("bofenghuang/vigostral-7b-chat")                                    
                 ):
         #self.numero = "+33659745825"
-        self.load_env_variables('.localenv')
+        self.load_env_variables('data_tests/.localenv')
         #load_dotenv('.localenv')
         self.db_path = db_path
         self.sqliteh = SQLiteHandler(self.db_path)

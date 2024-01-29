@@ -27,7 +27,7 @@ from interrogationMixtralAnyscale import InterrogationMixtral
 from sqlite_handler import SQLiteHandler
 
 url = "https://api.endpoints.anyscale.com/v1"
-iv = InterrogationMixtral(db_path='/amicusdb/amicus.sqlite',url=url)
+iv = InterrogationMixtral(db_path='amicusdb/amicus.sqlite', url=url)
 
 async def echo(ctx: ChatContext) -> None:
     if not ctx.message.empty():
@@ -60,7 +60,7 @@ async def main() -> None:
     """Start the bot."""
     # Connect the bot to number.
     async with Bot(os.environ["SIGNAL_PHONE_NUMBER"],
-                   socket_path="/signald/signald.sock") as bot:
+                   socket_path="old/signald/signald.sock") as bot:
         bot.register_handler("", echo)
         logging.info("Lance le robot")
         # Run the bot until you press Ctrl-C.

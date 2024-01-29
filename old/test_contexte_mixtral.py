@@ -81,7 +81,8 @@ class InterpreteurDeMessage:
             
 
 if __name__ == "__main__":
-    lignes = [line.strip() for line in sys.stdin]
+    lignes =["+33686492883 La tortue coure-t-elle plus vite que le lièvre ?"]
+    # lignes = [line.strip() for line in sys.stdin]
     idm = InterpreteurDeMessage()
     idm.allonzy(lignes)
     
