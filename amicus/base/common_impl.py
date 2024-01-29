@@ -14,6 +14,7 @@ class ConversationServiceImpl(ConversationService):
         self.assistant = assistant
         self.id2conversation = dict()
         self.sqlLiteHandler = SQLiteHandler( dataConfiguration.dbFileFqn )
+
     def processSpeech ( self, inputSpeech: Speech ) -> Speech:
         conversationId = inputSpeech.conversationId
         conversation = self.id2conversation.get( conversationId)

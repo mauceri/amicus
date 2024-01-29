@@ -53,6 +53,7 @@ class Conversation:
 class Assistant:
     def __init__(self, dataConfiguration: DataConfiguration):
         self.dataConfiguration = dataConfiguration
+
     def processSpeech (self,
                         inputSpeech : Speech,
                         conversation: Conversation) -> Tuple[Speech, Conversation]:
