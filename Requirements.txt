@@ -4,3 +4,7 @@ transformers
 sentencepiece
 protobuf
 jinja2
+openai
+langchain
+langchainhub
+

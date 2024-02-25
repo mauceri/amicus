@@ -25,7 +25,7 @@ class ConversationServiceImpl(ConversationService):
         return assistantSpeech
 
 
-class AnyScaleLLM (LLM):
+class AnyScaleLLM:
     def __init__(self, dataConfiguration: DataConfiguration ):
         self.dataConfiguration = dataConfiguration
         self.headers = {

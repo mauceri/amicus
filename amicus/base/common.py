@@ -3,6 +3,8 @@ import os
 import requests
 import json
 import logging
+from abc import ABC, abstractmethod
+
 
 class DataConfiguration:
     def __init__(self,
@@ -11,7 +13,7 @@ class DataConfiguration:
                  dbFileName : str,
                  llmUrl: str,
                  llmModel: str,
-                 llmApikeyEnvVar: str,
+                 llmApikey: str,
                  llmTemperature: float ):
         self.dataDir = dataDir
         self.envFileName = envFileName
@@ -30,12 +32,13 @@ class DataConfiguration:
         logFileFqn =  self.dataDir + "/" + logFileName
         logging.basicConfig(filename=logFileFqn, filemode="w", encoding=encoding, level=level)
 
-    def loadEnvVariables(self,file_path):
+    @staticmethod
+    def loadEnvVariables(file_path):
         with open(file_path, 'r') as file:
             for line in file:
                 if line.strip() and not line.startswith('#'):
                     key, value = line.strip().split('=', 1)
-                    os.environ[key] = value
+
 
 
 class Speech:
@@ -46,31 +49,31 @@ class Speech:
         self.content = content
 
 
-class Conversation:
+class Conversation(ABC):
     def __init__(self, id: str):
         self.id = id
 
-class Assistant:
-    def __init__(self, dataConfiguration: DataConfiguration):
-        self.dataConfiguration = dataConfiguration
 
+class Assistant(ABC):
+
+    @abstractmethod
     def processSpeech (self,
                         inputSpeech : Speech,
                         conversation: Conversation) -> Tuple[Speech, Conversation]:
         pass
 
+    @abstractmethod
     def createConversation (self, conversationId: str) -> Conversation:
         pass
 
 
-class ConversationService:
+class ConversationService(ABC):
+    @abstractmethod
     def processSpeech ( self, inputSpeech: Speech ) -> Speech:
         pass
 
 
-class LLM:
-    def sendMessage ( self, prompt: str, message: str, temperature: int)->str:
-        pass
+
 
 
 
