@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Tuple
 import os
 import requests
@@ -20,13 +21,13 @@ class DataConfiguration:
         self.dbFileName = dbFileName
         self.llmUrl = llmUrl
         self.llmModel = llmModel
-        self.llmApikeyEnvVar = llmApikeyEnvVar
+        self.llmApikey = llmApikey
         self.llmTemperature = llmTemperature
 
         self.dbFileFqn = self.dataDir + "/" + dbFileName
         envFileFqn = self.dataDir + "/" + envFileName
         self.loadEnvVariables(envFileFqn)
-        self.llmApikey = os.getenv(llmApikeyEnvVar)
+        self.llmApikey = llmApikey
 
     def setLoggingConfig(self, logFileName: str, encoding:str='utf-8', level:int=logging.DEBUG):
         logFileFqn =  self.dataDir + "/" + logFileName
@@ -41,7 +42,7 @@ class DataConfiguration:
 
 
 
-class Speech:
+class Message:
     def __init__(self, conversationId: str, speaker: str, date: str, content: str):
         self.conversationId = conversationId
         self.speaker = speaker
@@ -57,20 +58,28 @@ class Conversation(ABC):
 class Assistant(ABC):
 
     @abstractmethod
-    def processSpeech (self,
-                        inputSpeech : Speech,
-                        conversation: Conversation) -> Tuple[Speech, Conversation]:
+    def processMessage (self,
+                        inputMessage: Message,
+                        conversation: Conversation) -> Tuple[Message, Conversation]:
         pass
 
     @abstractmethod
     def createConversation (self, conversationId: str) -> Conversation:
         pass
 
+    @staticmethod
+    def getNow() -> str:
+        return datetime.now().isoformat()
+
 
 class ConversationService(ABC):
     @abstractmethod
-    def processSpeech ( self, inputSpeech: Speech ) -> Speech:
+    def processMessage (self, inputMessage: Message) -> Message:
         pass
+
+    @staticmethod
+    def getNow() -> str:
+        return datetime.now().isoformat()
 
 
 

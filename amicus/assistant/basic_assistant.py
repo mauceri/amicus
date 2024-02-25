@@ -7,18 +7,16 @@ class BasicAssistant (Assistant):
         self.llm = llm
         self.dataConfiguration = dataConfiguration
 
-    def processSpeech(self,
-                       inputSpeech: Speech,
-                       conversation: Conversation) -> Tuple[Speech, Conversation]:
+    def processMessage(self,
+                       inputSpeech: Message,
+                       conversation: Conversation) -> Tuple[Message, Conversation]:
         prompt = "Vous êtes un robot de discussion générale. Vos réponses sont concises, elles ne dépassent pas 500 mots, mais restent informatives."
         llmOutput = self.llm.sendMessage(prompt,
                              inputSpeech.content,
                              self.dataConfiguration.llmTemperature )
-        return Speech(conversation.id, "assistant", self._getNow(), llmOutput), conversation
+        return Message(conversation.id, "assistant", self.getNow(), llmOutput), conversation
 
     def createConversation(self, conversationId: str) -> Conversation:
         return Conversation(conversationId)
 
-    def _getNow(self) -> str:
-        return datetime.now().isoformat()
 

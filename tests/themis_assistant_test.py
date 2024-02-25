@@ -46,10 +46,10 @@ class ThemisAssistantTests (unittest.TestCase):
         assistant = ThemisAssistant(llm, verbose)
 
         conversation = assistant.createConversation(0)
-        speech = Speech(conversation.id, "John Smith", assistant.getNow(),
-                        "Could you give me the level of risk please?" )
+        speech = Message(conversation.id, "John Smith", assistant.getNow(),
+                        "Could you give me the level of risk please?")
         print("Question", speech.content)
-        respons = assistant.processSpeech(speech, conversation)
+        respons = assistant.processMessage(speech, conversation)
         print("Respons", respons.content)
 
 
@@ -62,15 +62,15 @@ class ThemisAssistantTests (unittest.TestCase):
         assistant = ThemisAssistant(llm, verbose)
 
         conversation = assistant.createConversation(0)
-        speech = Speech(conversation.id, "John Smith", assistant.getNow(),
+        speech = Message(conversation.id, "John Smith", assistant.getNow(),
                         "Increase the level of the threat to 0.5?")
         print("Question", speech.content)
-        respons = assistant.processSpeech(speech, conversation)
+        respons = assistant.processMessage(speech, conversation)
 
-        speech = Speech(conversation.id, "John Smith", assistant.getNow(),
+        speech = Message(conversation.id, "John Smith", assistant.getNow(),
                         "Give me now the risk level?")
         print("Question", speech.content)
-        respons = assistant.processSpeech(speech, conversation)
+        respons = assistant.processMessage(speech, conversation)
         print("Respons", respons.content)
 
 
@@ -83,16 +83,16 @@ class ThemisAssistantTests (unittest.TestCase):
         assistant = ThemisAssistant(llm, verbose)
 
         conversation = assistant.createConversation(0)
-        speech = Speech(conversation.id, "John Smith", assistant.getNow(),
+        speech = Message(conversation.id, "John Smith", assistant.getNow(),
                         "Increase the level of the threat to 0.5?")
         print("Question", speech.content)
-        respons = assistant.processSpeech(speech, conversation)
+        respons = assistant.processMessage(speech, conversation)
         print("Respons", respons.content)
 
-        speech = Speech(conversation.id, "John Smith", assistant.getNow(),
+        speech = Message(conversation.id, "John Smith", assistant.getNow(),
                         "Recommend a mitigation level for a maximum risk of 0.3")
         print("Question", speech.content)
-        respons = assistant.processSpeech(speech, conversation)
+        respons = assistant.processMessage(speech, conversation)
         print("Respons", respons.content)
 
 

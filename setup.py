@@ -31,6 +31,15 @@ setup(
     install_requires=[
         "matrix-nio",
         "amicus_interfaces",
+        "semaphore-bot==v0.16.0",
+        "requests",
+        "transformers",
+        "sentencepiece",
+        "protobuf",
+        "jinja2",
+        "openai",
+        "langchain",
+        "langchainhub"
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

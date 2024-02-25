@@ -41,12 +41,12 @@ class AgentAssistant (Assistant):
             verbose=True,
         )
 
-    def processSpeech(self,
-                       inputSpeech: Speech,
-                       conversation: Conversation) -> Tuple[Speech, Conversation]:
+    def processMessage(self,
+                       inputSpeech: Message,
+                       conversation: Conversation) -> Tuple[Message, Conversation]:
         response = self._agent_executor.invoke({"input": inputSpeech.content})
         print("response", response)
-        return Speech(conversation.id, "assistant", self.getNow(), response["output"])
+        return Message(conversation.id, "assistant", self.getNow(), response["output"])
 
     def createConversation(self, conversationId: str) -> Conversation:
         return Conversation(conversationId)

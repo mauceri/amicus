@@ -2,7 +2,7 @@ import sqlite3
 import json
 from typing import Dict
 
-from amicus.base.common import Speech
+from amicus.base.common import Message
 
 
 class SQLiteHandler:
@@ -36,12 +36,12 @@ class SQLiteHandler:
         with sqlite3.connect(self.db_path) as conn:
             conn.execute('DROP TABLE IF EXISTS contexte')
 
-    def ajout_speech(self, speech: Speech ):
+    def ajout_speech(self, speech: Message):
         with self.conn:
             self.conn.execute('INSERT INTO speeches (conversation,speaker,date,speech) VALUES (?, ?, ?, ?)',
                               (speech.conversationId, speech.speaker, speech.date, speech.content ) )
 
-    def ajout_speeches(self, speech1: Speech, speech2: Speech ):
+    def ajout_speeches(self, speech1: Message, speech2: Message):
         self.ajout_speech(speech1)
         self.ajout_speech(speech2)
 

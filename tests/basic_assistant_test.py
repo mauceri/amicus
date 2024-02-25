@@ -32,12 +32,12 @@ class AssistantTests (unittest.TestCase):
         agent = BasicAssistant(llm, dataConf)
         conversation="The yellow chamber"
         speaker = "Bob"
-        speechIn = Speech(conversation,
+        speechIn = Message(conversation,
                            speaker,
-                            self._getNow(),
+                           self._getNow(),
                     "Quelle est la circonférence de la terre en une phrase?")
-        assistantSpeech, newConversation = agent.processSpeech(speechIn,
-                                                        agent.createConversation(conversation))
+        assistantSpeech, newConversation = agent.processMessage(speechIn,
+                                                                agent.createConversation(conversation))
         self.assertIsNotNone(assistantSpeech)
         self.assertIsNotNone(newConversation)
 
@@ -52,9 +52,9 @@ class AssistantTests (unittest.TestCase):
 
         conversation="The yellow chamber"
         speaker = "Bob"
-        speechIn = Speech(conversation,
+        speechIn = Message(conversation,
                            speaker,
-                            self._getNow(),
+                           self._getNow(),
                     "Quelle est la circonférence de la terre en une phrase?")
 
         conversationService = ConversationServiceImpl(dataConf, assistant)
