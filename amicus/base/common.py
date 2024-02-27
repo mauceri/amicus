@@ -10,36 +10,29 @@ from abc import ABC, abstractmethod
 class DataConfiguration:
     def __init__(self,
                  dataDir : str,
-                 envFileName: str,
                  dbFileName : str,
+                 logFileName : str,
                  llmUrl: str,
                  llmModel: str,
                  llmApikey: str,
+                 llmApikeyEnvVar: str,
                  llmTemperature: float ):
         self.dataDir = dataDir
-        self.envFileName = envFileName
         self.dbFileName = dbFileName
+        self.logFileName = logFileName
         self.llmUrl = llmUrl
         self.llmModel = llmModel
         self.llmApikey = llmApikey
+        self.llmApikeyEnvVar = llmApikeyEnvVar
         self.llmTemperature = llmTemperature
 
-        self.dbFileFqn = self.dataDir + "/" + dbFileName
-        envFileFqn = self.dataDir + "/" + envFileName
-        self.loadEnvVariables(envFileFqn)
-        self.llmApikey = llmApikey
+        self.dbFileFqn = self.dataDir + "/" + self.dbFileName
+        os.environ[self.llmApikeyEnvVar] = self.llmApikey
+        self.setLoggingConfig( self.logFileName )
 
     def setLoggingConfig(self, logFileName: str, encoding:str='utf-8', level:int=logging.DEBUG):
         logFileFqn =  self.dataDir + "/" + logFileName
         logging.basicConfig(filename=logFileFqn, filemode="w", encoding=encoding, level=level)
-
-    @staticmethod
-    def loadEnvVariables(file_path):
-        with open(file_path, 'r') as file:
-            for line in file:
-                if line.strip() and not line.startswith('#'):
-                    key, value = line.strip().split('=', 1)
-
 
 
 class Message:

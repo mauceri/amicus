@@ -1,1 +1,10 @@
 ANY_SCALE_API_KEY=esecret_e8yd4kit37yxtqf4zrhbcylji4
+
+   "dataDir": "C:\\Users\\phili\\work\\amicus/data_tests",
+    "envFileName": ".localenv",
+    "dbFileName": "test_db.sqlite",
+    "llmUrl": "https://api.endpoints.anyscale.com/v1/chat/completions",
+    "llmModel": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "llmApikey": "esecret_e8yd4kit37yxtqf4zrhbcylji4",
+    "llmTemperature": 0.7
+

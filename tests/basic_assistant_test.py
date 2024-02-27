@@ -10,24 +10,17 @@ class AssistantTests (unittest.TestCase):
     REPERTOIRE_BASE = dirname(dirname(abspath(__file__)))
     REPERTOIRE_DATA = REPERTOIRE_BASE + "/data_tests"
 
-    def _createDataConfiguration(self):
-        dataConf = DataConfiguration (self.REPERTOIRE_DATA,
-                                            ".localenv",
-                                            "test_db.sqlite",
-                                            "https://api.endpoints.anyscale.com/v1/chat/completions",
-                                            "mistralai/Mixtral-8x7B-Instruct-v0.1",
-                                            "ANY_SCALE_API_KEY",
-                                            0.7)
-
-        dataConf.setLoggingConfig("test_log.txt")
-        logging.debug("test data conf")
-        return dataConf
+    def _createDataConfiguration(self, jsonFileName ) -> DataConfiguration:
+        service = DataConfigurationService()
+        jsonFileFqn = self.REPERTOIRE_DATA + "/" + jsonFileName
+        dataConfig = service.loadFromJson(jsonFileFqn)
+        return dataConfig
 
     def _getNow(self) -> str:
         return datetime.now().isoformat()
 
     def test_basic_assistant(self):
-        dataConf = self._createDataConfiguration()
+        dataConf = self._createDataConfiguration("dataConfigTest.json")
         llm = AnyScaleLLM(dataConf)
         agent = BasicAssistant(llm, dataConf)
         conversation="The yellow chamber"

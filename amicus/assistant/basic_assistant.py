@@ -1,9 +1,13 @@
 from amicus.base.common import *
+from amicus.base.common_impl import *
 from datetime import datetime
+from langchain_core.pydantic_v1 import BaseModel, Field
+from os.path import dirname, abspath
 
 
 class BasicAssistant (Assistant):
-    def __init__(self, llm: LLM, dataConfiguration: DataConfiguration):
+    def __init__(self,
+                 llm: BaseModel, dataConfiguration: DataConfiguration):
         self.llm = llm
         self.dataConfiguration = dataConfiguration
 
@@ -19,4 +23,18 @@ class BasicAssistant (Assistant):
     def createConversation(self, conversationId: str) -> Conversation:
         return Conversation(conversationId)
 
+
+class BasicAssistantIPlugin (AbstractAssistantIPlugin):
+    def __init__(self):
+        REPERTOIRE_BASE = dirname(dirname(abspath(__file__)))
+        REPERTOIRE_DATA = REPERTOIRE_BASE + "/data"
+        dataConf = DataConfiguration(self.REPERTOIRE_DATA,
+                                     ".localenv",
+                                     "basic_assistant_db.sqlite",
+                                     "https://api.endpoints.anyscale.com/v1/chat/completions",
+                                     "mistralai/Mixtral-8x7B-Instruct-v0.1",
+                                     "ANY_SCALE_API_KEY",
+                                     0.7)
+        dataConfiguration = DataConfiguration()
+        AbstractAssistantIPlugin.__init__( BasicAssistant)
 
