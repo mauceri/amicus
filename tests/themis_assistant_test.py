@@ -14,7 +14,6 @@ class ThemisAssistantTests (unittest.TestCase):
     REPERTOIRE_BASE = dirname(dirname(abspath(__file__)))
     REPERTOIRE_DATA = REPERTOIRE_BASE + "/data_tests"
 
-    ANYSCALE_API_KEY = "esecret_e8yd4kit37yxtqf4zrhbcylji4"
     ANYSCALE_API_BASE = "https://api.endpoints.anyscale.com/v1/chat/completions"
     ANYSCALE_MODEL_NAME = "mistralai/Mixtral-8x7B-Instruct-v0.1"
 

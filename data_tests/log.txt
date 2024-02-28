@@ -1,0 +1,22 @@
+DEBUG:httpx:load_ssl_context verify=True cert=None trust_env=True http2=False
+DEBUG:httpx:load_verify_locations cafile='C:\\Users\\phili\\work\\amicus\\venv\\lib\\site-packages\\certifi\\cacert.pem'
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.endpoints.anyscale.com:443
+DEBUG:urllib3.connectionpool:https://api.endpoints.anyscale.com:443 "GET /v1/models HTTP/1.1" 200 8310
+DEBUG:openai._base_client:Request options: {'method': 'post', 'url': '/chat/completions', 'files': None, 'json_data': {'messages': [{'role': 'user', 'content': 'Vous êtes un robot de discussion générale. Vos réponses sont concises, elles ne dépassent pas 100 mots, mais restent informatives. Quelle est la circonférence de la terre en une phrase? '}], 'model': 'mistralai/Mixtral-8x7B-Instruct-v0.1', 'n': 1, 'stream': False, 'temperature': 0.7}}
+DEBUG:httpcore.connection:connect_tcp.started host='api.endpoints.anyscale.com' port=443 local_address=None timeout=5.0 socket_options=None
+DEBUG:httpcore.connection:connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x000002A74198F580>
+DEBUG:httpcore.connection:start_tls.started ssl_context=<ssl.SSLContext object at 0x000002A7417DB4C0> server_hostname='api.endpoints.anyscale.com' timeout=5.0
+DEBUG:httpcore.connection:start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x000002A74198F2E0>
+DEBUG:httpcore.http11:send_request_headers.started request=<Request [b'POST']>
+DEBUG:httpcore.http11:send_request_headers.complete
+DEBUG:httpcore.http11:send_request_body.started request=<Request [b'POST']>
+DEBUG:httpcore.http11:send_request_body.complete
+DEBUG:httpcore.http11:receive_response_headers.started request=<Request [b'POST']>
+DEBUG:httpcore.http11:receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json'), (b'Content-Length', b'565'), (b'Connection', b'keep-alive'), (b'Date', b'Wed, 28 Feb 2024 09:30:20 GMT'), (b'server', b'uvicorn'), (b'x-request-id', b'99408d2d-ab49-4884-8d50-00466599ff89'), (b'X-Cache', b'Miss from cloudfront'), (b'Via', b'1.1 93e77bd122e2a2b3ec02228d81a35184.cloudfront.net (CloudFront)'), (b'X-Amz-Cf-Pop', b'FRA56-P10'), (b'X-Amz-Cf-Id', b'ejbDHb4HGyJbrUUAD8kWsFrGHVTeiFx2GMonEkIQO_MNbkbAwNQ2kg==')])
+INFO:httpx:HTTP Request: POST https://api.endpoints.anyscale.com/v1/chat/completions "HTTP/1.1 200 OK"
+DEBUG:httpcore.http11:receive_response_body.started request=<Request [b'POST']>
+DEBUG:httpcore.http11:receive_response_body.complete
+DEBUG:httpcore.http11:response_closed.started
+DEBUG:httpcore.http11:response_closed.complete
+DEBUG:openai._base_client:HTTP Request: POST https://api.endpoints.anyscale.com/v1/chat/completions "200 OK"
+DEBUG:root:Assistant reply =  The Earth's circumference at the equator is approximately 24,901 miles (40,075 kilometers), calculated using the Earth's average radius of 3,959 miles (6,371 kilometers).

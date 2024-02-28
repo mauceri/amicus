@@ -1,70 +1,72 @@
 import unittest
 from os.path import dirname, abspath
 
+from langchain_community.chat_models import ChatAnyscale, ChatOpenAI
+
 from amicus.assistant.basic_assistant import *
 from amicus.base.common_impl import *
 
 
-class AssistantTests (unittest.TestCase):
+class BasicAssistantTests (unittest.TestCase):
 
-    REPERTOIRE_BASE = dirname(dirname(abspath(__file__)))
-    REPERTOIRE_DATA = REPERTOIRE_BASE + "/data_tests"
+    BASE_DIR = dirname(dirname(abspath(__file__)))
+    DATA_DIR = BASE_DIR + "/data_tests/"
+    ENV_FILE = DATA_DIR + ".localenv"
+    ANYSCALE_URL = "https://api.endpoints.anyscale.com/v1/chat/completions"
+    ANYSCALE_MODEL = "mistralai/Mixtral-8x7B-Instruct-v0.1"
+    ANYSCALE_TEMPERATURE = 0.7
+    DB_FILE = DATA_DIR + "db.sqlite"
+    LOG_FILE = DATA_DIR + "log.txt"
 
-    def _createDataConfiguration(self, jsonFileName ) -> DataConfiguration:
-        service = DataConfigurationService()
-        jsonFileFqn = self.REPERTOIRE_DATA + "/" + jsonFileName
-        dataConfig = service.loadFromJson(jsonFileFqn)
-        return dataConfig
+    def _createLLM (self) -> ChatOpenAI:
+        AssistantService.loadEnvFile(BasicAssistantTests.ENV_FILE)
+        AssistantService.setLoggingConfig( self.LOG_FILE )
+        os.environ["ANYSCALE_API_BASE "] = self.ANYSCALE_URL
+        llm = ChatAnyscale(model_name=self.ANYSCALE_MODEL)
+        return llm
 
-    def _getNow(self) -> str:
-        return datetime.now().isoformat()
+    def _createBasicAssistant(self ) -> Assistant:
+        llm = self._createLLM()
+        agent = BasicAssistant(llm, self.ANYSCALE_TEMPERATURE )
+        return agent
+
+    def _createAssistantService(self) -> AssistantService:
+        assistant = self._createBasicAssistant()
+        assistantService = DbAssistantService( assistant, self.DB_FILE )
+        return assistantService
 
     def test_basic_assistant(self):
-        dataConf = self._createDataConfiguration("dataConfigTest.json")
-        llm = AnyScaleLLM(dataConf)
-        agent = BasicAssistant(llm, dataConf)
+        assistant = self._createBasicAssistant()
         conversation="The yellow chamber"
         speaker = "Bob"
-        speechIn = Message(conversation,
+        messageIn = Message(conversation,
                            speaker,
-                           self._getNow(),
+                           assistant.getNow(),
                     "Quelle est la circonférence de la terre en une phrase?")
-        assistantSpeech, newConversation = agent.processMessage(speechIn,
-                                                                agent.createConversation(conversation))
-        self.assertIsNotNone(assistantSpeech)
+        assistantMessage, newConversation = assistant.processMessage(messageIn,
+                                                                assistant.createConversation(conversation))
+        self.assertIsNotNone(assistantMessage)
         self.assertIsNotNone(newConversation)
 
-        logging.debug("Assistant reply = " + assistantSpeech.content )
-        print( "Assistant reply = " + assistantSpeech.content)
+        logging.debug("Assistant reply = " + assistantMessage.content )
+        print( "Assistant reply = " + assistantMessage.content)
 
+    def test_assistant_service(self):
+        assistantService = self._createAssistantService()
 
-    def test_conversation_pool(self):
-        dataConf = self._createDataConfiguration()
-        llm = AnyScaleLLM(dataConf)
-        assistant = BasicAssistant(llm, dataConf)
-
-        conversation="The yellow chamber"
+        conversationId="The yellow chamber"
         speaker = "Bob"
-        speechIn = Message(conversation,
+        messageIn = Message(conversationId,
                            speaker,
-                           self._getNow(),
+                           assistantService.getNow(),
                     "Quelle est la circonférence de la terre en une phrase?")
 
-        conversationService = ConversationServiceImpl(dataConf, assistant)
-        assistantSpeech = conversationService.processSpeech(speechIn)
-        self.assertIsNotNone(assistantSpeech)
+        assistantMessage = assistantService.processMessage(messageIn)
+        self.assertIsNotNone(assistantMessage)
 
-        logging.debug("Assistant reply = " + assistantSpeech.content)
-        print("Assistant reply = " + assistantSpeech.content)
+        logging.debug("Assistant reply = " + assistantMessage.content)
+        print("Assistant reply = " + assistantMessage.content)
 
-    def test_data_config_persistence(self):
-        dataConfig = self._createDataConfiguration()
-        dataConfigService = DataConfigurationService()
-        jsonFileFqn = dataConfig.dataDir + "/dataConfigTest.json"
-        dataConfigService.saveAsJson(dataConfig, jsonFileFqn)
-        dataConfigRead: DataConfiguration = dataConfigService.loadFromJson(jsonFileFqn)
-        self.assertIsNotNone(dataConfigRead)
-        self.assertEqual(dataConfigRead.dataDir, self.REPERTOIRE_DATA )
 
 if __name__ == '__main__':
     unittest.main()
