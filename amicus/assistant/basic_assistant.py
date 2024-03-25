@@ -36,23 +36,26 @@ class BasicAssistantIPlugin(AbstractAssistantIPlugin):
         self.ENV_FILE = self.DATA_DIR + ".localenv"
         self.ANYSCALE_URL = "https://api.endpoints.anyscale.com/v1/chat/completions"
         self.ANYSCALE_MODEL = "mistralai/Mixtral-8x7B-Instruct-v0.1"
+        self.ANYSCALE_TEMPERATURE = 0.7
         self.DB_FILE = self.DATA_DIR + "db.sqlite"
         self.LOG_FILE = self.DATA_DIR + "log.txt"
+        assistantService = self._createAssistantService()
+        AbstractAssistantIPlugin.__init__(self, assistantService, observable)
 
-        AbstractAssistantIPlugin.__init__(BasicAssistant, observable)
-
-    def _createLLM(self) -> BaseModel:
-        Assistant.readEnvFile(self.ENV_FILE)
+    def _createLLM (self) -> ChatOpenAI:
+        AssistantService.loadEnvFile(self.ENV_FILE)
+        AssistantService.setLoggingConfig( self.LOG_FILE )
         os.environ["ANYSCALE_API_BASE "] = self.ANYSCALE_URL
         llm = ChatAnyscale(model_name=self.ANYSCALE_MODEL)
         return llm
 
-    def _createBasicAssistant(self) -> Assistant:
+    def _createBasicAssistant(self ) -> Assistant:
         llm = self._createLLM()
-        agent = BasicAssistant(llm, self.ANYSCALE_TEMPERATURE)
+        agent = BasicAssistant(llm, self.ANYSCALE_TEMPERATURE )
         return agent
 
     def _createAssistantService(self) -> AssistantService:
         assistant = self._createBasicAssistant()
-        assistantService = DbAssistantService(assistant, self.DB_FILE)
+        assistantService = DbAssistantService( assistant, self.DB_FILE )
         return assistantService
+

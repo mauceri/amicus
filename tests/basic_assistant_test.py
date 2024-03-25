@@ -67,6 +67,45 @@ class BasicAssistantTests (unittest.TestCase):
         logging.debug("Assistant reply = " + assistantMessage.content)
         print("Assistant reply = " + assistantMessage.content)
 
+    def test_assistant_pluggin (self):
+        # not operational
+        inputObservable = TestIObservable()
+        assistantPluggin = BasicAssistantIPlugin ( inputObservable, self.DATA_DIR )
+        assistantPluggin.start()
+        roomId = "myRoom"
+        event = {"event_id": "id1", "sender": "Smith and Wesson", "origin_server_ts": 1234}
+        message = "what is the radius of the earth?"
+        event = RoomMessageText(event, message, message, None)
+        room = MatrixRoom( "room id 1", "user id 1")
+        inputObservable.onRoomEvent(room,event,message)
+        self.assertEqual( "Smith and Wesson", event.sender )
+        self.assertEqual( event, inputObservable.lastNotifiedEvent )
+        self.assertTrue(  inputObservable.lastNotifiedMessage.find("6,371") )
+
+
+        assistantPluggin.stop()
+
+
+class TestIObservable(IObservable):
+
+    def subscribe(self, observer: IObserver):
+        self._observer = observer
+
+    def unsubscribe(self, observer: IObserver):
+        self._observer = None
+
+    def onRoomEvent (self, room: MatrixRoom, event: RoomMessageText, message: str, filepath: str = None,
+               filename: str = None):
+        self._observer.notify_sync(room, event, message)
+        print("TestIOObservable", message)
+
+    def notify(self, room: MatrixRoom, event: RoomMessageText, message: str, filepath: str = None,
+               filename: str = None):
+        self.lastNotifiedEvent = event
+        self.lastNotifiedMessage = message
+        print("TestIOObservable", message)
+
+
 
 if __name__ == '__main__':
     unittest.main()

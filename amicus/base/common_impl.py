@@ -30,7 +30,7 @@ class DbAssistantService(AssistantService):
         return assistantMessage
 
 
-class AssistantIOObserver(IObserver):
+class AssistantIObserver(IObserver):
     def __init__(self,
                  assistantService: AssistantService,
                  observable: IObservable = None):
@@ -48,6 +48,17 @@ class AssistantIOObserver(IObserver):
                                        outputMessage.content, None,
                                        None)
 
+    def notify_sync(self, room: MatrixRoom, event: RoomMessageText, msg: str):
+        inputMessage = Message(room.room_id,
+                               event.sender,
+                               self._assistantService.getNow(),
+                               msg)
+        outputMessage = self._assistantService.processMessage(inputMessage)
+
+        self._observable.notify(room, event,
+                                      outputMessage.content, None,
+                                      None)
+
     def prefix(self):
         return "!assistant"
 
@@ -56,7 +67,7 @@ class AbstractAssistantIPlugin(IPlugin, ABC):
     def __init__(self,
                  assistantService: AssistantService,
                  observable: IObservable):
-        self._observer = AssistantIOObserver( assistantService, observable)
+        self._observer = AssistantIObserver( assistantService, observable)
         self._observable = observable
         logger.info(f"********************** Observateur créé {self._observer.prefix()}")
 
@@ -65,5 +76,6 @@ class AbstractAssistantIPlugin(IPlugin, ABC):
         self._observable.subscribe(self._observer)
 
     async def stop(self):
-        pass
+        self._observable.unsubscribe(self._observer)
+
 
