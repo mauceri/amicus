@@ -32,6 +32,7 @@ setup(
         "matrix-nio",
         "amicus_interfaces",
         "semaphore-bot==v0.16.0",
+        "dspy-ai",
         "requests",
         "transformers",
         "sentencepiece",

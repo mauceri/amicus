@@ -4,40 +4,51 @@ from os.path import dirname, abspath
 from langchain_community.chat_models import ChatAnyscale, ChatOpenAI
 
 from amicus.assistant.basic_assistant import *
+from amicus.assistant.dspy_assistant import DSPyAssistant
 from amicus.base.common_impl import *
 import time
+from dspy import *
 
-
-class BasicAssistantTests (unittest.TestCase):
+class DSPyAssistantTests (unittest.TestCase):
 
     BASE_DIR = dirname(dirname(abspath(__file__)))
     DATA_DIR = BASE_DIR + "/data_tests/"
     ENV_FILE = DATA_DIR + ".localenv"
-    ANYSCALE_URL = "https://api.endpoints.anyscale.com/v1/chat/completions"
+    ANYSCALE_URL = "https://api.endpoints.anyscale.com/v1/chat"
+    ANYSCALE_URL = "https://api.endpoints.anyscale.com/v1"
     ANYSCALE_MODEL = "mistralai/Mixtral-8x7B-Instruct-v0.1"
+    # ANYSCALE_MODEL = "meta-llama/Llama-2-70b-chat-hf"
     ANYSCALE_TEMPERATURE = 0.7
     DB_FILE = DATA_DIR + "db.sqlite"
     LOG_FILE = DATA_DIR + "log.txt"
 
-    def _createLLM (self) -> ChatOpenAI:
-        AssistantService.loadEnvFile(BasicAssistantTests.ENV_FILE)
+
+    def _createLLM (self) -> Anyscale:
+        AssistantService.loadEnvFile(self.ENV_FILE)
         AssistantService.setLoggingConfig( self.LOG_FILE )
         os.environ["ANYSCALE_API_BASE"] = self.ANYSCALE_URL
-        llm = ChatAnyscale(model_name=self.ANYSCALE_MODEL)
+        llm = Anyscale(model=self.ANYSCALE_MODEL,
+                       temperature=self.ANYSCALE_TEMPERATURE,
+                       use_chat_api=True)
         return llm
 
-    def _createBasicAssistant(self ) -> Assistant:
+    def _createRetriever (self) -> ColBERTv2:
+        retriever = dspy.ColBERTv2(url='http://20.102.90.50:2017/wiki17_abstracts')
+        return retriever
+
+    def _createAssistant(self ) -> Assistant:
         llm = self._createLLM()
-        agent = BasicAssistant(llm, self.ANYSCALE_TEMPERATURE )
+        retriever = self._createRetriever()
+        agent = DSPyAssistant(llm, retriever )
         return agent
 
     def _createAssistantService(self) -> AssistantService:
-        assistant = self._createBasicAssistant()
+        assistant = self._createAssistant()
         assistantService = DbAssistantService( assistant, self.DB_FILE )
         return assistantService
 
-    def test_basic_assistant(self):
-        assistant = self._createBasicAssistant()
+    def test_dspy_assistant(self):
+        assistant = self._createAssistant()
         conversation="The yellow chamber"
         speaker = "Bob"
         messageIn = Message(conversation,
