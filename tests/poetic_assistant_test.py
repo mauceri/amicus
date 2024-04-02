@@ -8,6 +8,7 @@ from amicus.base.common_impl import *
 import time
 from dspy import *
 
+
 class PoeticAssistantTests (unittest.TestCase):
 
     BASE_DIR = dirname(dirname(abspath(__file__)))
@@ -20,7 +21,6 @@ class PoeticAssistantTests (unittest.TestCase):
     ANYSCALE_TEMPERATURE = 0.2
     DB_FILE = DATA_DIR + "db.sqlite"
     LOG_FILE = DATA_DIR + "log.txt"
-
 
     def _createLLM (self) -> Anyscale:
         AssistantService.loadEnvFile(self.ENV_FILE)
@@ -37,12 +37,12 @@ class PoeticAssistantTests (unittest.TestCase):
         agent = PoeticAssistant(llm,lineNumber)
         return agent
 
-    def _createAssistantService(self) -> AssistantService:
-        assistant = self._createAssistant()
+    def _createAssistantService(self, lineNumber:int) -> AssistantService:
+        assistant = self._createAssistant(lineNumber)
         assistantService = DbAssistantService( assistant, self.DB_FILE )
         return assistantService
 
-    def test_poetic_assistant_zeroshot(self):
+    def test_poetic_assistant_zeroshot_1(self):
         lineNumber = 4
         assistant = self._createAssistant(lineNumber)
         conversation="The poetic chamber"
@@ -60,33 +60,35 @@ class PoeticAssistantTests (unittest.TestCase):
         print( "Assistant reply = " + assistantMessage.content)
 
 
-    def test_assistant_service_zeroshot(self):
-        multihop = False
-        assistantService = self._createAssistantService(multihop)
-
-        conversationId="The yellow chamber"
-        speaker = "Bob"
-        messageIn = Message(conversationId,
+    def test_poetic_assistant_zeroshot_2(self):
+        lineNumber = 8
+        assistant = self._createAssistant(lineNumber)
+        conversation="The poetic chamber"
+        speaker = "Victor"
+        messageIn = Message(conversation,
                            speaker,
-                           assistantService.getNow(),
-                    "What is the circonference of the planet Mars?")
-
-        assistantMessage = assistantService.processMessage(messageIn)
+                           assistant.getNow(),
+                    "l'amour impossible dans nos vies éphémères', poème en français.")
+        assistantMessage, newConversation = assistant.processMessage(messageIn,
+                                                                assistant.createConversation(conversation))
         self.assertIsNotNone(assistantMessage)
+        self.assertIsNotNone(newConversation)
 
-        logging.debug("Assistant reply = " + assistantMessage.content)
-        print("Assistant reply = " + assistantMessage.content)
+        logging.debug("Assistant reply = " + assistantMessage.content )
+        print( "Assistant reply = " + assistantMessage.content)
 
-    def test_assistant_service_multihop(self):
-        multihop = True
-        assistantService = self._createAssistantService(multihop)
+
+    def test_assistant_service_zeroshot(self):
+        lineNumber = 4
+
+        assistantService = self._createAssistantService(lineNumber)
 
         conversationId="The yellow chamber"
         speaker = "Bob"
         messageIn = Message(conversationId,
                            speaker,
                            assistantService.getNow(),
-                    "What is the circonference of the planet Mars?")
+                    "l'importance de l'ordinateur dans nos vies modernes, poème en français.")
 
         assistantMessage = assistantService.processMessage(messageIn)
         self.assertIsNotNone(assistantMessage)
@@ -96,35 +98,20 @@ class PoeticAssistantTests (unittest.TestCase):
 
     def test_assistant_pluggin_sync (self):
         # not operational
+        lineNumber = 4
+
         inputObservable = TestIObservable()
-        assistantPluggin = DSPyAssistantIPlugin ( inputObservable, self.DATA_DIR )
+        assistantPluggin = PoeticAssistantIPlugin ( inputObservable, self.DATA_DIR, lineNumber )
         assistantPluggin.start()
         roomId = "myRoom"
         event = {"event_id": "id1", "sender": "Smith and Wesson", "origin_server_ts": 1234}
-        message = "what is the radius of the earth?"
+        message = "l'importance de l'ordinateur dans nos vies modernes, poème en français."
         event = RoomMessageText(event, message, message, None)
         room = MatrixRoom( "room id 1", "user id 1")
         inputObservable.onRoomEvent_sync(room,event,message)
         self.assertEqual( "Smith and Wesson", event.sender )
         self.assertEqual( event, inputObservable.lastNotifiedEvent )
-        self.assertTrue(  inputObservable.lastNotifiedMessage.find("6,371")>=0 )
-        assistantPluggin.stop()
-
-    def test_assistant_pluggin_async (self):
-        # not operational
-        inputObservable = TestIObservable()
-        assistantPluggin = BasicAssistantIPlugin ( inputObservable, self.DATA_DIR )
-        assistantPluggin.start()
-        roomId = "myRoom"
-        event = {"event_id": "id1", "sender": "Smith and Wesson", "origin_server_ts": 1234}
-        message = "what is the radius of the earth?"
-        event = RoomMessageText(event, message, message, None)
-        room = MatrixRoom( "room id 1", "user id 1")
-        inputObservable.onRoomEvent(room,event,message)
-        time.sleep(10)
-        self.assertEqual( "Smith and Wesson", event.sender )
-        self.assertEqual( event, inputObservable.lastNotifiedEvent )
-        self.assertTrue(  inputObservable.lastNotifiedMessage.find("6,371") )
+        self.assertTrue(  inputObservable.lastNotifiedMessage.find("ordinateur")>=0 )
         assistantPluggin.stop()
 
 

@@ -4,6 +4,11 @@ from os.path import dirname, abspath
 from dspy import *
 from dsp.utils import deduplicate
 
+prompt_1 = """
+Génère un poème composé au plus de {lineNumber} vers ou lignes, chacunes comportant 12 pieds exactement.
+Evite les répétitions de mots dans un même vers.
+Ce poème évoque le sujet suivant: {subject}.
+"""
 
 class PoeticAssistant(Assistant):
     def __init__(self,
@@ -27,7 +32,7 @@ class PoeticAssistant(Assistant):
 
 
 class PoeticAssistantIPlugin(AbstractAssistantIPlugin):
-    def __init__(self, observable: IObservable, dataDir: str = None, multihop = True):
+    def __init__(self, observable: IObservable, dataDir: str = None, lineNumber: int = 4):
         self.BASE_DIR = dirname(dirname(abspath(__file__)))
         self.DATA_DIR = self.BASE_DIR + "/data/" if dataDir is None else dataDir
         self.ENV_FILE = self.DATA_DIR + ".localenv"
@@ -38,7 +43,7 @@ class PoeticAssistantIPlugin(AbstractAssistantIPlugin):
         self.ANYSCALE_MAX_TOKENS = 1000
         self.DB_FILE = self.DATA_DIR + "db.sqlite"
         self.LOG_FILE = self.DATA_DIR + "log.txt"
-        assistantService = self._createAssistantService(multihop)
+        assistantService = self._createAssistantService(lineNumber)
         AbstractAssistantIPlugin.__init__(self, assistantService, observable)
 
     def _createLLM (self) -> Anyscale:
@@ -51,13 +56,13 @@ class PoeticAssistantIPlugin(AbstractAssistantIPlugin):
                        max_tokens=self.ANYSCALE_MAX_TOKENS)
         return llm
 
-    def _createAssistant(self,  multihop: bool ) -> Assistant:
+    def _createAssistant(self, lineNumber: int) -> Assistant:
         llm = self._createLLM()
-        agent = PoeticAssistant(llm )
+        agent = PoeticAssistant(llm, lineNumber )
         return agent
 
-    def _createAssistantService(self,  multihop: bool) -> AssistantService:
-        assistant = self._createAssistant(multihop)
+    def _createAssistantService(self,lineNumber: int) -> AssistantService:
+        assistant = self._createAssistant(lineNumber)
         assistantService = DbAssistantService( assistant, self.DB_FILE )
         return assistantService
 
@@ -66,8 +71,8 @@ class PoemGenerator(dspy.Signature):
     """Génère un poème répondant à un sujet"""
 
     subject = dspy.InputField(desc="Décrit le sujet du poème")
-    lineNumber = dspy.InputField(desc="Le nombre de ligne ou de vers composant le poème")
-    poem = dspy.OutputField(desc="Le poeme en alexandrins répondant aux demandes du sujet")
+    lineNumber = dspy.InputField(desc="Le nombre de ligne ou de vers qui composent le poème")
+    poem = dspy.OutputField(desc="Le poème en alexandrin correspondant sujet")
 
 
 class SimplePoemModel(dspy.Module):
@@ -80,7 +85,8 @@ class SimplePoemModel(dspy.Module):
         self.poemGenerator = dspy.Predict(PoemGenerator)
 
     def forward(self, subject):
+        prePromptSubject = prompt_1.format( lineNumber=self.lineNumber, subject=subject)
         poem = self.poemGenerator(
-            subject = "Génère un poème composé au plus de 4 vers dont chacun comporte 12 pieds exactement. Ce poème évoque le sujet suivant:" + subject,
+            subject = prePromptSubject,
             lineNumber = str(self.lineNumber))
         return poem
