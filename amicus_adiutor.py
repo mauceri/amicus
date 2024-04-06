@@ -14,11 +14,11 @@ from os.path import dirname, abspath
 class Plugin(IPlugin):
     def __init__(self,observable:IObservable):
         self.__observable = observable
-        self.ba = BasicAssistantIPlugin(observable,"/var/amicus_adiutor/ba","!ba")
+        self.ba = BasicAssistantIPlugin(observable,"/data/amicus_adiutor/ba","!ba")
         logger.info(f"********************** Observateur créé {self.ba.prefix()}")
-        self.dspya = DSPyAssistantIPlugin(observable,"/var/amicus_adiutor/dspya","!dspya")
+        self.dspya = DSPyAssistantIPlugin(observable,"/data/amicus_adiutor/dspya","!dspya")
         logger.info(f"********************** Observateur créé {self.dspya.prefix()}")
-        self.poema = PoeticAssistantIPlugin(observable,"/var/amicus_adiutor/poema","!poema")
+        self.poema = PoeticAssistantIPlugin(observable,"/data/amicus_adiutor/poema","!poema")
         logger.info(f"********************** Observateur créé {self.poema.prefix()}")
         
         
