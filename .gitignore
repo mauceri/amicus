@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+amicus_adiutor_env/*
+
 # C extensions
 *.so
 

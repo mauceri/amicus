@@ -15,10 +15,12 @@ logger = logging.getLogger(__name__)
 class DbAssistantService(AssistantService):
     def __init__(self,
                  assistant: Assistant,
-                 dbFileFqn: str):
+                 dbFileFqn: str,
+                 prefix:str=None):
         self._assistant = assistant
         self._id2conversation = dict()
         self._sqlLiteHandler = SQLiteHandler( dbFileFqn )
+        self.prefix = prefix
 
     def processMessage (self, inputMessage: Message) -> Message:
         conversationId = inputMessage.conversationId
@@ -33,9 +35,12 @@ class DbAssistantService(AssistantService):
 class AssistantIObserver(IObserver):
     def __init__(self,
                  assistantService: AssistantService,
-                 observable: IObservable = None):
+                 observable: IObservable = None,
+                 prefix: str="!assistant"):
         self._assistantService = assistantService
         self._observable = observable
+        self.prefix = prefix
+        
 
     async def notify(self, room: MatrixRoom, event: RoomMessageText, msg: str):
         inputMessage = Message(room.room_id,
@@ -60,14 +65,15 @@ class AssistantIObserver(IObserver):
                                       None)
 
     def prefix(self):
-        return "!assistant"
+        return self.prefix
 
 
 class AbstractAssistantIPlugin(IPlugin, ABC):
     def __init__(self,
                  assistantService: AssistantService,
-                 observable: IObservable):
-        self._observer = AssistantIObserver( assistantService, observable)
+                 observable: IObservable,
+                 prefix:str=None):
+        self._observer = AssistantIObserver( assistantService, observable,prefix)
         self._observable = observable
         logger.info(f"********************** Observateur créé {self._observer.prefix()}")
 

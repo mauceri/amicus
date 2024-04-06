@@ -30,7 +30,7 @@ class BasicAssistant(Assistant):
 
 
 class BasicAssistantIPlugin(AbstractAssistantIPlugin):
-    def __init__(self, observable: IObservable, dataDir: str = None):
+    def __init__(self, observable: IObservable, dataDir: str = None, prefix:str = "!ba"):
         self.BASE_DIR = dirname(dirname(abspath(__file__)))
         self.DATA_DIR = self.BASE_DIR + "/data/" if dataDir is None else dataDir
         self.ENV_FILE = self.DATA_DIR + ".localenv"
@@ -40,7 +40,7 @@ class BasicAssistantIPlugin(AbstractAssistantIPlugin):
         self.DB_FILE = self.DATA_DIR + "db.sqlite"
         self.LOG_FILE = self.DATA_DIR + "log.txt"
         assistantService = self._createAssistantService()
-        AbstractAssistantIPlugin.__init__(self, assistantService, observable)
+        AbstractAssistantIPlugin.__init__(self, assistantService, observable,prefix)
 
     def _createLLM (self) -> ChatOpenAI:
         AssistantService.loadEnvFile(self.ENV_FILE)

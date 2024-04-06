@@ -23,7 +23,7 @@ long_description = read_file(("README.md",))
 
 
 setup(
-    name="test",
+    name="amicus_adiutor",
     version='0.1.0',
     url="https://github.com/mauceri/amicus",
     description="Un assistant qui vous veut du bien",
