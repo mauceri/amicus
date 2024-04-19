@@ -89,3 +89,22 @@ volumes:
 - The `check_signald.py` file must be launched using the command `'nohup python3 script.py &'`. It contains a function that checks every minute that the `signald` service is alive. If a network cut has killed the service, it is restarted (Using `systemd` would be more orthodox).
 
 **That's all for now.**
+
+# Notes
+
+- matrix: http://synapse.amicus-electrum.xyz/_matrix/static/
+- jupyter: https://jupyter.amicus-electrum.xyz/login?next=%2Ftree%3F
+-   file/new/terminal
+-   cd data
+-   nano pluggins.yaml
+-   history ou hash...
+-   docker log docker-amicus_bot-1
+-   prise en compte yaml : sudo systemctl start amicus-bot.service
+
+robot server 
+sudo systemctl stop amicus-bot.service
+ 1126  docker rm docker-amicus_bot-1 
+ 1127  sudo systemctl start amicus-bot.service
+ 1128  docker logs docker-amicus_bot-1 2>&1 
+ 1129  nano amicus_bot/callbacks.py 
+

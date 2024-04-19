@@ -14,20 +14,20 @@ from os.path import dirname, abspath
 class Plugin(IPlugin):
     def __init__(self,observable:IObservable):
         self.__observable = observable
-        self.ba = BasicAssistantIPlugin(observable,"/data/amicus_adiutor/ba","!ba")
-        logger.info(f"********************** Observateur créé {self.ba.prefix()}")
-        self.dspya = DSPyAssistantIPlugin(observable,"/data/amicus_adiutor/dspya","!dspya")
-        logger.info(f"********************** Observateur créé {self.dspya.prefix()}")
+#        self.ba = BasicAssistantIPlugin(observable,"/data/amicus_adiutor/ba","!ba")
+#        logger.info(f"********************** Observateur créé {self.ba.prefix()}")
+#        self.dspya = DSPyAssistantIPlugin(observable,"/data/amicus_adiutor/dspya","!dspya")
+#        logger.info(f"********************** Observateur créé {self.dspya.prefix()}")
         self.poema = PoeticAssistantIPlugin(observable,"/data/amicus_adiutor/poema","!poema")
         logger.info(f"********************** Observateur créé {self.poema.prefix()}")
         
         
     def start(self):
-        logger.info(f"********************** Inscripton de {self.ba.prefix()}")
+        logger.info(f"********************** Inscription de {self.ba.prefix()}")
         self.ba.start()
-        logger.info(f"********************** Inscripton de {self.dspya.prefix()}")
+        logger.info(f"********************** Inscription de {self.dspya.prefix()}")
         self.dspya.start()
-        logger.info(f"********************** Inscripton de {self.poema.prefix()}")
+        logger.info(f"********************** Inscription de {self.poema.prefix()}")
         self.poema.start()
 
     async def stop(self):

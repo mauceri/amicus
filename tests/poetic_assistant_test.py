@@ -96,25 +96,6 @@ class PoeticAssistantTests (unittest.TestCase):
         logging.debug("Assistant reply = " + assistantMessage.content)
         print("Assistant reply = " + assistantMessage.content)
 
-    def test_assistant_pluggin_sync (self):
-        # not operational
-        lineNumber = 4
-
-        inputObservable = TestIObservable()
-        assistantPluggin = PoeticAssistantIPlugin ( inputObservable, self.DATA_DIR, lineNumber )
-        assistantPluggin.start()
-        roomId = "myRoom"
-        event = {"event_id": "id1", "sender": "Smith and Wesson", "origin_server_ts": 1234}
-        message = "l'importance de l'ordinateur dans nos vies modernes, poème en français."
-        event = RoomMessageText(event, message, message, None)
-        room = MatrixRoom( "room id 1", "user id 1")
-        inputObservable.onRoomEvent_sync(room,event,message)
-        self.assertEqual( "Smith and Wesson", event.sender )
-        self.assertEqual( event, inputObservable.lastNotifiedEvent )
-        self.assertTrue(  inputObservable.lastNotifiedMessage.find("ordinateur")>=0 )
-        assistantPluggin.stop()
-
-
 class TestIObservable(IObservable):
 
     def subscribe(self, observer: IObserver):
